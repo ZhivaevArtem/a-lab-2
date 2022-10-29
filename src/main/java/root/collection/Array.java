@@ -34,6 +34,21 @@ public class Array<T> implements Iterable<T> {
         }
     }
 
+    public Array(List<T> list, int begin) {
+        this(list.size(), begin);
+        for (int i = getBegin(); i < getEnd(); i++) {
+            set(i, list.get(i - getBegin()));
+        }
+    }
+
+    public List<T> toList() {
+        List<T> list = new ArrayList<>(getSize());
+        for (T t : this) {
+            list.add(t);
+        }
+        return list;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

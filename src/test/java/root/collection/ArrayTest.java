@@ -1,5 +1,9 @@
 package root.collection;
 
+import java.beans.Transient;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,6 +37,28 @@ public class ArrayTest {
     public void copyConstructorTest() {
         Array<Integer> array = new Array<>(this.array);
         Assertions.assertEquals(this.array, array);
+    }
+
+    @Test
+    public void toListTest() {
+        List<Integer> expected = new ArrayList<>(array.getSize());
+        for (Integer i : array) {
+            expected.add(i);
+        }
+
+        Assertions.assertEquals(expected, array.toList());
+    }
+
+    @Test
+    public void fromListTest() {
+        Array<Integer> expected = new Array<>(5, 3);
+        expected.set(3, 6);
+        expected.set(4, 7);
+        expected.set(5, 8);
+        expected.set(6, 9);
+        expected.set(7, 10);
+
+        Assertions.assertEquals(expected, new Array<>(Arrays.asList(6, 7, 8, 9, 10), 3));
     }
 
     @Test
