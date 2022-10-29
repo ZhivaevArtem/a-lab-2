@@ -55,7 +55,7 @@ public class SolverDefault implements Solver {
         )) {
             Array<Integer> v = V.size() == 0
                     ? new Array<>(0, 1)
-                    : branch.branch(V);
+                    : branch.branch(V, data);
 
             List<Integer> all = new ArrayList<>(data.getN());
             for (int i = 1; i <= data.getN(); i++) {

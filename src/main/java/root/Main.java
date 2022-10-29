@@ -17,6 +17,7 @@ public class Main {
     public static void main(String[] args) throws FileNotFoundException {
         Solver solver = new SolverDefault();
         BasicMethods basicMethods = new BasicMethods();
+        basicMethods.withLower(basicMethods).withUpper(basicMethods);
         OwnMethods ownMethods = new OwnMethods();
 
         String resourcePath = Main.class.getClassLoader().getResource("").getPath();
