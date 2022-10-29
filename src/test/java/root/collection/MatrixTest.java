@@ -6,23 +6,36 @@ import org.junit.jupiter.api.Test;
 
 public class MatrixTest {
     private Matrix<Integer> matrix;
-    private int startsFromI;
-    private int startsFromJ;
 
     @BeforeEach
     public void initMatrix() {
-        startsFromI = 11;
-        startsFromJ = 13;
-        matrix = new Matrix<>(17, 29);
-        for (int i = 0; i < matrix.getHeight(); i++) {
-            for (int j = 0; j < matrix.getWidth(); j++) {
-                matrix.set(startsFromI + i, startsFromJ + j, i + j);
+        matrix = new Matrix<>(29, 13, 17, 11);
+        for (int i = matrix.getBeginI(); i < matrix.getEndI(); i++) {
+            for (int j = matrix.getBeginJ(); j < matrix.getEndJ(); j++) {
+                matrix.set(i, j, i + j - matrix.getBeginI() - matrix.getBeginJ());
             }
         }
     }
 
     @Test
+    public void manualCopyTest() {
+        Matrix<Integer> matrix = new Matrix<>(this.matrix.getHeight(), this.matrix.getBeginI(), this.matrix.getWidth(), this.matrix.getBeginJ());
+        for (int i = this.matrix.getBeginI(); i < this.matrix.getEndI(); i++) {
+            for (int j = this.matrix.getBeginJ(); j < this.matrix.getEndJ(); j++) {
+                matrix.set(i, j, this.matrix.get(i, j));
+            }
+        }
+        Assertions.assertEquals(this.matrix, matrix);
+    }
+
+    @Test
+    public void copyConstructorTest() {
+        Matrix<Integer> matrix = new Matrix<>(this.matrix);
+        Assertions.assertEquals(this.matrix, matrix);
+    }
+
+    @Test
     public void cyclicAccessTest() {
-        Assertions.assertEquals(8, matrix.get(startsFromI + 3, startsFromJ + 5));
+        Assertions.assertEquals(8, matrix.get(matrix.getBeginI() + 3, matrix.getBeginJ() + 5));
     }
 }

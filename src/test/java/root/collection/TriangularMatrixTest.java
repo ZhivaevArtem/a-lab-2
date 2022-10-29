@@ -9,9 +9,9 @@ public class TriangularMatrixTest {
 
     @BeforeEach
     public void initMatrix() {
-        matrix = new TriangularMatrix<>(31);
-        for (int i = 0; i < matrix.getSize(); i++) {
-            for (int j = i; j < matrix.getSize(); j++) {
+        matrix = new TriangularMatrix<>(2, 1);
+        for (int i = matrix.getBegin(); i < matrix.getEnd(); i++) {
+            for (int j = i; j < matrix.getEnd(); j++) {
                 matrix.set(i, j, i + ":" + j);
             }
         }

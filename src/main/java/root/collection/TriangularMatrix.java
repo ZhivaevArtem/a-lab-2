@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TriangularMatrix<T> extends SquareMatrix<T> {
-    public TriangularMatrix(int size) {
-        super(size);
+    public TriangularMatrix(int size, int begin) {
+        super(size, begin);
     }
 
     @Override
@@ -18,10 +18,7 @@ public class TriangularMatrix<T> extends SquareMatrix<T> {
 
     @Override
     public void set(int i, int j, T value) {
-        if (j < i) {
-            super.set(j, i, value);
-            return;
-        }
+        super.set(j, i, value);
         super.set(i, j, value);
     }
 
