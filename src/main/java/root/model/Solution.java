@@ -1,6 +1,7 @@
 package root.model;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Solution {
     private List<Integer> order;
@@ -13,5 +14,14 @@ public class Solution {
 
     public List<Integer> getOrder() {
         return order;
+    }
+
+    public int getCriteria() {
+        return criteria;
+    }
+
+    @Override
+    public String toString() {
+        return "[" + order.stream().map(String::valueOf).collect(Collectors.joining(", ")) + "] " + criteria;
     }
 }
