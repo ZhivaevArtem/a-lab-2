@@ -133,6 +133,20 @@ public class BasicMethods implements BranchMethod, LowerEstimateMethod, UpperEst
         return argmin;
     }
 
+    private int argmax(Array<Integer> w) {
+        int argmax = w.getBegin();
+        Integer max = w.get(argmax);
+        for (int i = w.getBegin(); i < w.getEnd(); i++) {
+            Integer v = w.get(i);
+            if (null == v) continue;
+            if (null == max || v > max) {
+                max = v;
+                argmax = i;
+            }
+        }
+        return argmax;
+    }
+
     @Override
     public int upperEstimate(Array<Integer> v, TaskData data) {
         int k = v.getSize();
@@ -146,9 +160,10 @@ public class BasicMethods implements BranchMethod, LowerEstimateMethod, UpperEst
             }
             Array<Integer> others = CollectionUtils.subtract(new Array<>(all, 1), x);
             int z = data.getT().get(0, x.get(1));
-            for (int i = 2; i <= data.getN() - (k + j); i++) {
-                z += data.getT().get(x.get(i - 1), x.get(i));
-            }
+            if (x.getSize() > 1)
+                for (int i = 2; i <= data.getN() - (k + j); i++) {
+                    z += data.getT().get(x.get(i - 1), x.get(i));
+                }
             Array<Integer> w = new Array<>(data.getN(), 1);
             for (int i = 1; i <= data.getN() - (k + j); i++) {
                 int wbi = Integer.MAX_VALUE;
@@ -163,9 +178,30 @@ public class BasicMethods implements BranchMethod, LowerEstimateMethod, UpperEst
         }
 
         int estimate = 0;
-        for (Integer xi : x) {
-            estimate += xi;
+        for (int i = x.getBegin(); i < x.getEnd(); i++) {
+            estimate += w(i, x, data);
         }
         return estimate;
+    }
+
+    private int y(int i, Array<Integer> x) {
+        for (int j = x.getBegin(); j < x.getEnd(); j++) {
+            if (x.get(j) == i) return j;
+        }
+        throw new Error();
+    }
+
+    private int z(int i, Array<Integer> x, TaskData data) {
+        int z = data.getT().get(0, x.get(1));
+        int yy = y(i, x) - 1;
+        for (int j = 1; j <= yy; j++) {
+            z += data.getT().get(x.get(j), x.get(j + 1));
+        }
+        return z;
+    }
+
+    private int w(int i, Array<Integer> x, TaskData data) {
+        if (z(i, x, data) <= data.getTD().get(i)) return 0;
+        return 1;
     }
 }

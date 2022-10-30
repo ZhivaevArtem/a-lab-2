@@ -51,7 +51,7 @@ public class SolverDefault implements Solver {
     private Array<Integer> branchAndBound(TaskData data, BranchMethod branch, UpperEstimateMethod upper, LowerEstimateMethod lower) {
         List<Array<Integer>> V = new LinkedList<>();
         while (!(
-                V.size() == 1 && upper.upperEstimate(V.get(0), data) == lower.lowerEstimate(V.get(0), data)
+                V.size() == 1 && V.get(0).getSize() == data.getN() && upper.upperEstimate(V.get(0), data) == lower.lowerEstimate(V.get(0), data)
         )) {
             Array<Integer> v = V.size() == 0
                     ? new Array<>(0, 1)
