@@ -1,5 +1,6 @@
 package root.utils;
 
+import java.util.ArrayList;
 import java.util.List;
 import root.collection.Array;
 
@@ -16,5 +17,13 @@ public class CollectionUtils {
         List<T> list = array.toList();
         list.add(t);
         return new Array<>(list, array.getBegin());
+    }
+
+    public static Array<Integer> range(int start, int end, int begin) {
+        List<Integer> list = new ArrayList<>(end - start);
+        for (int i = start; i < end; i++) {
+            list.add(i);
+        }
+        return new Array<>(list, begin);
     }
 }

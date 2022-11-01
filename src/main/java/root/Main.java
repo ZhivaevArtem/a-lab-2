@@ -12,13 +12,15 @@ import root.task.BasicMethods;
 import root.task.OwnMethods;
 import root.task.Solver;
 import root.task.SolverDefault;
+import root.task.decorator.ToolSetDecoratorCache;
 
 public class Main {
     public static void main(String[] args) throws FileNotFoundException {
         Solver solver = new SolverDefault();
-        BasicMethods basicMethods = new BasicMethods();
-        basicMethods.withLower(basicMethods).withUpper(basicMethods);
-        OwnMethods ownMethods = new OwnMethods();
+        BasicMethods basicToolset = new BasicMethods();
+        basicToolset.withLower(basicToolset).withUpper(basicToolset);
+        OwnMethods ownToolset = new OwnMethods();
+        ownToolset.withLower(ownToolset).withUpper(ownToolset);
 
         String resourcePath = Main.class.getClassLoader().getResource("").getPath();
         List<File> files = Stream.of(new File(resourcePath).listFiles())
@@ -40,10 +42,14 @@ public class Main {
                 }
             }
             TaskData data = new TaskData(n, td, t);
-            Solution solution = solver.solve(data, basicMethods, basicMethods, basicMethods);
+            Solution solution = solver.solve(data,
+                    new ToolSetDecoratorCache(basicToolset),
+                    new ToolSetDecoratorCache(basicToolset),
+                    new ToolSetDecoratorCache(basicToolset));
             System.out.println(file.getName());
             System.out.println(solution);
             System.out.println();
+            System.out.flush();
         }
     }
 }

@@ -1,14 +1,17 @@
 package root.task;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import root.collection.Array;
 import root.model.TaskData;
 import root.utils.CollectionUtils;
+import root.utils.TaskUtils;
 
-public class BasicMethods implements BranchMethod, LowerEstimateMethod, UpperEstimateMethod {
-    private LowerEstimateMethod lower;
-    private UpperEstimateMethod upper;
+public class BasicMethods implements ToolSet {
+    protected LowerEstimateMethod lower = this;
+    protected UpperEstimateMethod upper = this;
 
     private boolean lessOrEqualThanEach(Array<Integer> v, List<Array<Integer>> V) {
         for (Array<Integer> vv : V) {
@@ -73,20 +76,32 @@ public class BasicMethods implements BranchMethod, LowerEstimateMethod, UpperEst
 
     @Override
     public Array<Integer> branch(List<Array<Integer>> V, TaskData data) {
-        return
-                branchRealistic(V ,data);
-//                branchHybrid(V ,data);
-//                branchOptimistic(V ,data);
-//                branchWide(V ,data);
+        Array<Integer> out1 = null, out2 = null;
+        if (V.size() == 1) {
+            return V.get(0);
+        }
+        for (Array<Integer> v : V) {
+            if (out1 == null && lessOrEqualThanEach(v, V)) {
+                out1 = v;
+                if (higherLessOrEqualThanEach(v, V, data)) {
+                    if (out2 == null) out2 = v;
+                    if (lowerLessOrEqualThanEach(v, V, data)) {
+                        return v;
+                    }
+                }
+            }
+        }
+        if (out2 != null) return out2;
+        if (out1 != null) return out1;
+        throw new Error("");
     }
 
     @Override
     public int lowerEstimate(Array<Integer> v, TaskData data) {
-        List<Integer> all = new ArrayList<>(data.getN());
-        for (int i = 1; i <= data.getN(); i++) {
-            all.add(i);
-        }
-        Array<Integer> others = CollectionUtils.subtract(new Array<>(all, 1), v);
+        Array<Integer> others = CollectionUtils.subtract(
+                CollectionUtils.range(1, data.getN() + 1, 1),
+                v
+        );
 
         int k = v.getSize();
         Array<Integer> z = new Array<>(data.getN(), 1);
@@ -133,20 +148,6 @@ public class BasicMethods implements BranchMethod, LowerEstimateMethod, UpperEst
         return argmin;
     }
 
-    private int argmax(Array<Integer> w) {
-        int argmax = w.getBegin();
-        Integer max = w.get(argmax);
-        for (int i = w.getBegin(); i < w.getEnd(); i++) {
-            Integer v = w.get(i);
-            if (null == v) continue;
-            if (null == max || v > max) {
-                max = v;
-                argmax = i;
-            }
-        }
-        return argmax;
-    }
-
     @Override
     public int upperEstimate(Array<Integer> v, TaskData data) {
         int k = v.getSize();
@@ -179,29 +180,8 @@ public class BasicMethods implements BranchMethod, LowerEstimateMethod, UpperEst
 
         int estimate = 0;
         for (int i = x.getBegin(); i < x.getEnd(); i++) {
-            estimate += w(i, x, data);
+            estimate += TaskUtils.w(i, x, data);
         }
         return estimate;
-    }
-
-    private int y(int i, Array<Integer> x) {
-        for (int j = x.getBegin(); j < x.getEnd(); j++) {
-            if (x.get(j) == i) return j;
-        }
-        throw new Error();
-    }
-
-    private int z(int i, Array<Integer> x, TaskData data) {
-        int z = data.getT().get(0, x.get(1));
-        int yy = y(i, x) - 1;
-        for (int j = 1; j <= yy; j++) {
-            z += data.getT().get(x.get(j), x.get(j + 1));
-        }
-        return z;
-    }
-
-    private int w(int i, Array<Integer> x, TaskData data) {
-        if (z(i, x, data) <= data.getTD().get(i)) return 0;
-        return 1;
     }
 }
